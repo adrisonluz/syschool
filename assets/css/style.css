@@ -318,7 +318,7 @@ background: #b1216c;
 #rounded-corner td
 {
 padding: 8px;
-background: #ffedf9;
+background: #fff7fc;
 border-top: 1px solid #fff;
 color: #954F73;
 }
@@ -397,9 +397,9 @@ a:hover.bt_red{ text-decoration:underline;}
 width:195px;
 padding:15px 0 5px 0;
 }
-.sidebar_box_top{width:195px;height:8px;background:#ffedf9;}
-.sidebar_box_bottom{width:195px;height:8px;background:#ffedf9;}
-.sidebar_box_content{width:175px;height:auto;background-color:#ffedf9; padding:0 10px 0 10px;}
+.sidebar_box_top{width:195px;height:8px;background:#fff7fc;}
+.sidebar_box_bottom{width:195px;height:8px;background:#fff7fc;}
+.sidebar_box_content{width:175px;height:auto;background-color:#fff7fc; padding:0 10px 0 10px;}
 
 .sidebar_box_content h3{ color:#49bae8; float:left; font-size:18px; margin:0px;padding:0px; font-weight:normal;}
 .sidebar_box_content h4{ color:#f75744; float:left; font-size:18px; margin:0px;padding:0px; font-weight:normal;}

@@ -54,6 +54,7 @@
  * NOTE: If you change these, also change the error_reporting() code below
  */
 	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
+        //define('ENVIRONMENT', 'production');
 
 /*
  *---------------------------------------------------------------
@@ -230,7 +231,16 @@ switch (ENVIRONMENT)
 	// Name of the "system folder"
 	define('SYSDIR', trim(strrchr(trim(BASEPATH, '/'), '/'), '/'));
 
-	// The path to the "application" folder
+        // Directory default for layout archives
+        define('LAYOUTPATH', $application_folder.'/layouts/');
+        
+        // Directory default for js archives
+        define('JSPATH', 'assets/js/');
+        
+        // Directory default for css archives
+        define('CSSPATH', 'assets/css/');
+	
+        // The path to the "application" folder
 	if (is_dir($application_folder))
 	{
 		if (($_temp = realpath($application_folder)) !== FALSE)
