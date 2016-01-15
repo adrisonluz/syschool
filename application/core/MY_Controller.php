@@ -4,7 +4,8 @@
 class MY_Controller extends CI_Controller {
     protected   $user;    
     public      $url;
-    
+    public      $sector;
+
     /**
     * Layout default utilizado pelo controlador.
     */
@@ -31,5 +32,29 @@ class MY_Controller extends CI_Controller {
                
         $url = base_url();
         $this->url = $url;
+    }
+    
+    public function setTitle($title) {
+        $this->title = $title;
+    }
+    
+    public function setLayout($layout) {
+        $this->layout = $layout;
+    }
+    
+    public function setCSS($css = array()) {
+        $this->css = $css;
+    }
+    
+    public function setJS($js = array()) {
+        $this->js = $js;
+    }
+    
+    public function setSector($sector) {
+        $this->sector = $sector;
+    }
+    
+    public function getSector() {
+        return $this->sector;
     }
 }
