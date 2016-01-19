@@ -27,4 +27,21 @@ $(document).ready(function() {
     
     var current = $('#current').text();
     $(".menu a[rel="+current+"]").addClass('current');
+    
+    $('.niceform').submit(function(){
+        
+        $.post( 'enviar', $(this).serialize(), function(result){
+            console.log(result);
+            var resposta = JSON.parse(result);
+            if(resposta['msg'] == 'sucess'){
+                alert(resposta['text']);
+                window.location.pathname = '/listar';
+            }else{
+                alert(resposta['text']);
+            }
+        });
+        
+        return false;
+    });
+    
 });
