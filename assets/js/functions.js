@@ -22,6 +22,26 @@ ddaccordion.init({
 	}
 })
 
+function mensagemRetorno(tipo, text){
+    $('#main_container').append('<div id="msg"></div>');
+    $('#msg').fadeIn(2000);
+    
+    setTimeout("$('#msg').fadeOut(2000)", 5000);
+    setTimeout("$('#msg').remove()", 7000);
+    
+    switch(tipo){
+        case 'sucess':
+            $('#msg').addClass('valid_box').html(text);
+            break;
+        case 'error':
+            $('#msg').addClass('error_box').html(text);
+            break;
+        case 'alert':
+            $('#msg').addClass('warning_box').html(text);
+            break;
+    }
+}
+
 $(document).ready(function() {
     $('.ask').jConfirmAction();
     
@@ -31,16 +51,16 @@ $(document).ready(function() {
     $('.niceform').submit(function(){
         
         $.post( 'enviar', $(this).serialize(), function(result){
-            console.log(result);
+            //console.log(result);
             var resposta = JSON.parse(result);
             if(resposta['msg'] == 'sucess'){
-                alert(resposta['text']);
-                window.location.pathname = '/listar';
+                mensagemRetorno(resposta['msg'], resposta['text']);
+                setTimeout(function(){ window.location.pathname = 'syschool/' + current + '/listar'; }, 7000);                
             }else{
-                alert(resposta['text']);
+                mensagemRetorno(resposta['msg'], resposta['text']);
             }
         });
-        
+       
         return false;
     });
     

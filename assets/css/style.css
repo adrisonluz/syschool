@@ -10,8 +10,20 @@ color: #b1216c;
 .clear{
 clear:both;
 }
+.left{
+  float: left;
+}
+.right{
+  float: right;
+}
+.metade{
+  width: 50%;
+}
 a{
 color:#b32871;
+}
+h1{
+text-transform: capitalize;
 }
 h2{
 font-size:18px;
@@ -421,15 +433,16 @@ background-position:0px 10px;
 color: #555555;
 }
 
+#msg{position: fixed; bottom: 2px; right: 1px; display: none;}
 
 .warning_box{width:540px;clear:both;background:url(../img/template/images/warning.png) no-repeat left #fff7b3;
-border:1px #e9e6c7 solid;background-position:15px 10px;padding:20px 20px 15px 60px;margin:0 0 10px 0;}
+border:1px #e9e6c7 solid;background-position:15px 10px;padding:20px 20px 15px 60px;}
 
 .valid_box{width:540px;clear:both;background:url(../img/template/images/valid.png) no-repeat left #d8ffce;
-border:1px #cceac4 solid;background-position:15px 10px;padding:20px 20px 15px 60px;margin:0 0 10px 0;}
+border:1px #cceac4 solid;background-position:15px 10px;padding:20px 20px 15px 60px;}
 
 .error_box{width:540px;clear:both;background:url(../img/template/images/error.png) no-repeat left #ffcfcf;
-border:1px #eac7c7 solid;background-position:15px 10px;padding:20px 20px 15px 60px;margin:0 0 10px 0;}
+border:1px #eac7c7 solid;background-position:15px 10px;padding:20px 20px 15px 60px;}
 
 /*--------------*/
 div.pagination {

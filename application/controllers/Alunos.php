@@ -3,6 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Alunos extends MY_Controller {
     public $dados;
+    public $id;
 
     public function __construct() {
         parent::__construct();
@@ -10,6 +11,7 @@ class Alunos extends MY_Controller {
         $this->setTitle('Aline Rosa | Alunos');
         $this->setSector('Alunos');
         $this->dados['sector'] = $this->getSector();
+        $this->setModel('User', 'user_model');
         
         //$this->load->model('Model', '', TRUE);
         $this->dados['url'] = $this->url;
@@ -35,16 +37,19 @@ class Alunos extends MY_Controller {
                     )
             )
         );
+        
+        $url_exp = explode('/id/',$this->current_url);
+        if(!empty($url_exp[1])){
+            $this->id = $url_exp[1];
+        }  else {
+            $this->id = '';
+        }
     }
     
     public function listar()
-    {           
-        if(!empty($_GET['id'])){
-            
-        }else{
-            
-        }
-        
+    {      
+        $this->dados['campos_tabela'] = array('ID','Nome','Idade','RG','Tel');       
+        $this->dados['lista'] = $this->user_model->listar($this->id, $this->dados['campos_tabela']);        
         
         $this->load->view('listar', $this->dados);
     }
@@ -234,7 +239,7 @@ class Alunos extends MY_Controller {
         
         foreach($dados as $campo => $valor){
             if($valor == '' AND in_array($campo, $listaImportantes)){
-                $msg .=  "O campo \"$importantes[$campo]\" é obrigatório.\n";
+                $msg .=  "O campo \"$importantes[$campo]\" é obrigatório. <br/>";
             }
         }        
         
@@ -245,8 +250,6 @@ class Alunos extends MY_Controller {
             $msgError = array("msg" => "error", "text" => $msg);
             echo json_encode($msgError);      
         }else{
-            $this->load->model('User', 'user_model', TRUE);
-
             if ($this->user_model->inserir($dados)) {
                 $msg = array("msg" => "sucess", "text" => $dados['nome'] . ' cadastrado com sucesso!');
                 echo json_encode($msg);
@@ -265,5 +268,24 @@ class Alunos extends MY_Controller {
         
         $this->dados['lista'] = $lista;
         $this->load->view('relatorio', $this->dados);
+    }
+    
+    public function perfil() {
+        if($this->id == ''){
+            redirect('../alunos/listar');
+        }
+        
+        $this->dados['perfil'] = $this->user_model->listar($id);
+        $this->load->view('perfil', $this->dados);
+    }
+    
+    public function delete() {      
+        if($this->user_model->excluir($this->id)){
+            echo 'Excluído com sucesso!';
+        }else{
+            echo 'Houve um erro ao excluir.';
+        }
+        
+        exit();
     }
 }

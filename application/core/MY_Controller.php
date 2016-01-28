@@ -4,7 +4,9 @@
 class MY_Controller extends CI_Controller {
     protected   $user;    
     public      $url;
+    public      $current_url;
     public      $sector;
+    public      $model;
 
     /**
     * Layout default utilizado pelo controlador.
@@ -32,6 +34,8 @@ class MY_Controller extends CI_Controller {
                
         $url = base_url();
         $this->url = $url;
+        
+        $this->current_url = current_url();
     }
     
     public function setTitle($title) {
@@ -56,5 +60,9 @@ class MY_Controller extends CI_Controller {
     
     public function getSector() {
         return $this->sector;
+    }
+    
+    public function setModel($model, $apelido) {
+        $this->model = $this->load->model($model, $apelido, TRUE);
     }
 }

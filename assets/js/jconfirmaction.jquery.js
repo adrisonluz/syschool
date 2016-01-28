@@ -15,9 +15,9 @@
 		// yesAnswer : a text for Yes answer.
 		// cancelAnswer : a text for Cancel/No answer.
 		var theOptions = jQuery.extend ({
-			question: "Are You Sure ?",
-			yesAnswer: "Yes",
-			cancelAnswer: "Cancel"
+			question: "Você tem certeza?",
+			yesAnswer: "Sim",
+			cancelAnswer: "Não"
 		}, options);
 		
 		return this.each (function () {
@@ -33,7 +33,12 @@
 				$(this).next('.question').animate({opacity: 1}, 300);
 				
 				$('.yes').bind('click', function(){
-					window.location = thisHref;
+                                    var excUrl = $(this).parent().prev().attr('href');
+
+                                    $.post( excUrl, '', function(result){
+                                        alert(result);
+                                        window.location.reload();
+                                    });
 				});
 		
 				$('.cancel').bind('click', function(){
