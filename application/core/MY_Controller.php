@@ -7,7 +7,9 @@ class MY_Controller extends CI_Controller {
     public      $current_url;
     public      $sector;
     public      $model;
-
+    public      $dados;
+    public      $id;
+    
     /**
     * Layout default utilizado pelo controlador.
     */
@@ -26,7 +28,7 @@ class MY_Controller extends CI_Controller {
     /**
     * Carregando os js default.
     */
-    public $js = array('clockp','clockh','jquery.min','ddaccordion','jconfirmaction.jquery','niceforms','functions');
+    public $js = array('clockp','clockh','jquery.min','ddaccordion','jconfirmaction.jquery','niceforms','mask.min','functions');
 
             
     function __construct() {
@@ -34,7 +36,7 @@ class MY_Controller extends CI_Controller {
                
         $url = base_url();
         $this->url = $url;
-        
+                
         $this->current_url = current_url();
     }
     
@@ -64,5 +66,9 @@ class MY_Controller extends CI_Controller {
     
     public function setModel($model, $apelido) {
         $this->model = $this->load->model($model, $apelido, TRUE);
+    }
+    
+    public function debug($param) {
+        $this->dados['debug'] = $param;
     }
 }

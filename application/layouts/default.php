@@ -8,6 +8,13 @@
 {layout_js}
 </head>
 <body>
+<?php
+    if(isset($debug)){
+        echo '<pre>';
+        var_dump($debug);
+        echo '</pre>';
+    }
+?>  
 <div id="main_container">
 	<div class="header">
     <div class="logo"><a href="<?= base_url();?>"><img src="<?= base_url('assets/img/logo.png');?>" alt="" title="" border="0" /></a></div>

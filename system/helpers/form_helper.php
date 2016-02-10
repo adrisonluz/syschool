@@ -391,7 +391,7 @@ if ( ! function_exists('form_dropdown'))
 					continue;
 				}
 
-				$form .= '<optgroup label="'.$key."\">\n";
+				//$form .= '<optgroup label="'.$key."\">\n";
 
 				foreach ($val as $optgroup_key => $optgroup_val)
 				{
@@ -400,7 +400,7 @@ if ( ! function_exists('form_dropdown'))
 						.(string) $optgroup_val."</option>\n";
 				}
 
-				$form .= "</optgroup>\n";
+				//$form .= "</optgroup>\n";
 			}
 			else
 			{

@@ -47,20 +47,29 @@ $(document).ready(function() {
     
     var current = $('#current').text();
     $(".menu a[rel="+current+"]").addClass('current');
+
+    /* Máscara dos formulários */
+    $('.formDate').mask('00/00/0000');
+    $('.formCEP').mask('00000-000');
+    $('.formFone').mask('(00) 0000-0000');
+    $('.formCPF').mask('000.000.000-00');
+    $('.formDin').mask('000.000.000.000.000,00', {reverse: true});
+    $('.formPorc').mask('##0,00%', {reverse: true});
     
     $('.niceform').submit(function(){
-        
-        $.post( 'enviar', $(this).serialize(), function(result){
-            //console.log(result);
+        $('#submit').attr('disabled','disabled');
+        $.post( '/syschool/' + current + '/enviar', $(this).serialize(), function(result){            
+            console.log(result);
             var resposta = JSON.parse(result);
             if(resposta['msg'] == 'sucess'){
                 mensagemRetorno(resposta['msg'], resposta['text']);
                 setTimeout(function(){ window.location.pathname = 'syschool/' + current + '/listar'; }, 7000);                
             }else{
                 mensagemRetorno(resposta['msg'], resposta['text']);
+                $('#submit').removeAttr('disabled');
             }
         });
-       
+        
         return false;
     });
     
