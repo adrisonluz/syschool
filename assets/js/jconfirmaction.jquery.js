@@ -6,50 +6,59 @@
  * Licensed Under GPL version 2 license.
  *
  */
-(function($){
+(function ($) {
 
-	jQuery.fn.jConfirmAction = function (options) {
-		
-		// Some jConfirmAction options (limited to customize language) :
-		// question : a text for your question.
-		// yesAnswer : a text for Yes answer.
-		// cancelAnswer : a text for Cancel/No answer.
-		var theOptions = jQuery.extend ({
-			question: "Você tem certeza?",
-			yesAnswer: "Sim",
-			cancelAnswer: "Não"
-		}, options);
-		
-		return this.each (function () {
-			
-			$(this).bind('click', function(e) {
+    jQuery.fn.jConfirmAction = function (options) {
 
-				e.preventDefault();
-				thisHref	= $(this).attr('href');
-				
-				if($(this).next('.question').length <= 0)
-					$(this).after('<div class="question">'+theOptions.question+'<br/> <span class="yes">'+theOptions.yesAnswer+'</span><span class="cancel">'+theOptions.cancelAnswer+'</span></div>');
-				
-				$(this).next('.question').animate({opacity: 1}, 300);
-				
-				$('.yes').bind('click', function(){
-                                    var excUrl = $(this).parent().prev().attr('href');
+        // Some jConfirmAction options (limited to customize language) :
+        // question : a text for your question.
+        // yesAnswer : a text for Yes answer.
+        // cancelAnswer : a text for Cancel/No answer.
+        var theOptions = jQuery.extend({
+            question: "Você tem certeza?",
+            yesAnswer: "Sim",
+            cancelAnswer: "Não"
+        }, options);
 
-                                    $.post( excUrl, '', function(result){
-                                        alert(result);
-                                        window.location.reload();
-                                    });
-				});
-		
-				$('.cancel').bind('click', function(){
-					$(this).parents('.question').fadeOut(300, function() {
-						$(this).remove();
-					});
-				});
-				
-			});
-			
-		});
-	}
-	
+        return this.each(function () {
+
+            $(this).bind('click', function (e) {
+                var current = $('#current').text();
+                e.preventDefault();
+                thisHref = $(this).attr('href');
+
+                if ($(this).next('.question').length <= 0)
+                    $(this).after('<div class="question">' + theOptions.question + '<br/> <span class="yes">' + theOptions.yesAnswer + '</span><span class="cancel">' + theOptions.cancelAnswer + '</span></div>');
+
+                $(this).next('.question').animate({opacity: 1}, 300);
+
+                $('.yes').bind('click', function () {
+                    var excUrl = $(this).parent().prev().attr('href');
+                    $('.question').hide('1000');
+                    $.post(excUrl, '', function (result) {
+                        console.log(result);
+                        var resposta = JSON.parse(result);
+                        if (resposta['msg'] == 'sucess') {
+                            mensagemRetorno(resposta['msg'], resposta['text']);
+                            setTimeout(function () {
+                                window.location.pathname = 'syschool/' + current + '/listar';
+                            }, 7000);
+                        } else {
+                            mensagemRetorno(resposta['msg'], resposta['text']);
+                            $('#submit').removeAttr('disabled');
+                        }
+                    });
+                });
+
+                $('.cancel').bind('click', function () {
+                    $(this).parents('.question').fadeOut(300, function () {
+                        $(this).remove();
+                    });
+                });
+
+            });
+
+        });
+    }
+
 })(jQuery);
