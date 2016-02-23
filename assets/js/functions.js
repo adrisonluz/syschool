@@ -1,5 +1,9 @@
 var url = window.location.host;
-url = 'http://' + url + '/syschool';
+if (url == 'localhost') {
+    url = 'http://' + url + '/syschool';
+} else {
+    url = 'http://' + url;
+}
 
 ddaccordion.init({
     headerclass: "submenuheader", //Shared CSS class name of headers group
@@ -59,7 +63,7 @@ $(document).ready(function () {
 
     $('.niceform').submit(function () {
         $//('#submit').attr('disabled', 'disabled');
-        $.post('/syschool/' + current + '/enviar', $(this).serialize(), function (result) {
+        $.post(url + '/' + current + '/enviar', $(this).serialize(), function (result) {
             console.log(result);
             var resposta = JSON.parse(result);
             if (resposta['msg'] == 'sucess') {
@@ -85,7 +89,7 @@ $(document).ready(function () {
             return false;
         }
 
-        $.post('/syschool/alunos/consultaIdade', "id_consult=" + $(this).val(), function (result) {
+        $.post(url + '/alunos/consultaIdade', "id_consult=" + $(this).val(), function (result) {
             console.log(result);
             var resposta = JSON.parse(result);
             if (resposta['idade'] < 18) {

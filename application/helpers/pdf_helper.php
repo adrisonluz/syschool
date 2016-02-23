@@ -16,7 +16,7 @@ function pdf($html, $filename = null, $cabecalho = '', $rodape = '') {
 
     //Cabeçalho: Seta a data/hora completa de quando o PDF foi gerado + um texto no lado direito
     if ($cabecalho !== '') {
-        $mpdf->SetHeader('{DATE j/m/Y H:i}|{PAGENO}/{nb} | ' . $cabecalho);
+        $mpdf->SetHeader('{DATE j/m/Y H:i}| | ' . $cabecalho);
     }
     //Rodapé: Seta a data/hora completa de quando o PDF foi gerado + um texto no lado direito
     if ($rodape !== '') {
