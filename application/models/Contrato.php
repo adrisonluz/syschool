@@ -52,4 +52,12 @@ class Contrato extends MY_Model {
         return $this->db->delete($this->table, array('id_contrato' => $id));
     }
 
+    function listaIdAluno($id) {
+        $this->db->where('id_aluno', $id);
+        $this->db->join('user', 'ctr.id_aluno = user.id');
+
+        $query = $this->db->get($this->table . ' ctr');
+        return $query->result_array();
+    }
+
 }

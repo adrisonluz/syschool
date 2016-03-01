@@ -18,8 +18,17 @@ class Alunos extends MY_Controller {
 
         $sidebar = new Sidebar();
         $sidebar->setSidebar('Novo Aluno', base_url('alunos/cadastro'));
-        $sidebar->setSidebar('Contratos', base_url('contratos/listar'));
-        //$sidebar->setSidebar('Logs', base_url('logs/listar'));
+
+        if (!empty($this->id)) {
+            $this->load->model('Contrato', 'contrato_model', TRUE);
+            $contrato = $this->contrato_model->listaIdAluno($this->id);
+
+            $sidebar->setSidebar('Contratos', base_url('contratos/editar/id/' . $contrato[0]['id_contrato']));
+        } else {
+            $sidebar->setSidebar('Contratos', base_url('contratos/listar'));
+        }
+
+        $sidebar->setSidebar('Logs', base_url('logs/listar'));
 
         $sidebar->setSubmenu('Financeiro', base_url('relatorios/financeiro'));
         $sidebar->setSubmenu('Horarios', base_url('relatorios/horarios'));
@@ -55,13 +64,13 @@ class Alunos extends MY_Controller {
         $form .= '</tr>';
         $form .= '<tr>';
         $form .= '<td>';
-        $form .= form_label('RG*:', '', array('for' => 'email'));
+        $form .= form_label('RG:', '', array('for' => 'email'));
         $form .= form_input('rg', '', array('size' => 30));
         $form .= '</td>';
         $form .= '</tr>';
         $form .= '<tr>';
         $form .= '<td>';
-        $form .= form_label('CPF*:', '', array('for' => 'email'));
+        $form .= form_label('CPF:', '', array('for' => 'email'));
         $form .= form_input('cpf', '', array('size' => 30, 'class' => 'formCPF'));
         $form .= '</td>';
         $form .= '<td>';
@@ -71,11 +80,11 @@ class Alunos extends MY_Controller {
         $form .= '</tr>';
         $form .= '<tr>';
         $form .= '<td>';
-        $form .= form_label('Email*:', '', array('for' => 'email'));
+        $form .= form_label('Email:', '', array('for' => 'email'));
         $form .= form_input('email', '', array('size' => 30));
         $form .= '</td>';
         $form .= '<td>';
-        $form .= form_label('Senha*:', '', array('for' => 'email'));
+        $form .= form_label('Senha:', '', array('for' => 'email'));
         $form .= form_password('senha', '', array('size' => 20));
         $form .= '</td>';
         $form .= '</tr>';
@@ -113,27 +122,27 @@ class Alunos extends MY_Controller {
         $form .= '</tr>';
         $form .= '<tr>';
         $form .= '<td>';
-        $form .= form_label('Nome pai**:', '', array('for' => 'email'));
+        $form .= form_label('Nome pai:', '', array('for' => 'email'));
         $form .= form_input('nome_pai', '', array('size' => 30));
         $form .= '</td>';
         $form .= '<td>';
-        $form .= form_label('Celular pai**:', '', array('for' => 'email'));
+        $form .= form_label('Celular pai:', '', array('for' => 'email'));
         $form .= form_input('cel_pai', '', array('size' => 30, 'class' => 'formFone'));
         $form .= '</td>';
         $form .= '</tr>';
         $form .= '<tr>';
         $form .= '<td>';
-        $form .= form_label('Nome mãe**:', '', array('for' => 'email'));
+        $form .= form_label('Nome mãe:', '', array('for' => 'email'));
         $form .= form_input('nome_mae', '', array('size' => 30));
         $form .= '</td>';
         $form .= '<td>';
-        $form .= form_label('Celular mãe**:', '', array('for' => 'email'));
+        $form .= form_label('Celular mãe:', '', array('for' => 'email'));
         $form .= form_input('cel_mae', '', array('size' => 30, 'class' => 'formFone'));
         $form .= '</td>';
         $form .= '</tr>';
         $form .= '<tr>';
         $form .= '<td>';
-        $form .= form_label('Email responsável**:', '', array('for' => 'email'));
+        $form .= form_label('Email responsável:', '', array('for' => 'email'));
         $form .= form_input('email_resp', '', array('size' => 30));
         $form .= '</td>';
         $form .= '</tr>';
@@ -175,7 +184,7 @@ class Alunos extends MY_Controller {
         $form .= '</tr>';
         $form .= '</table>';
         $form .= form_close();
-        $form .= '<span class="obs">*Campos obrigatórios. **Campos obrigatórios quando aluno menor de idade.</span>';
+        $form .= '<span class="obs">*Campos obrigatórios.</span>';
 
         $this->dados['form'] = $form;
         $this->load->view('cadastro', $this->dados);
@@ -210,13 +219,13 @@ class Alunos extends MY_Controller {
         $form .= '</tr>';
         $form .= '<tr>';
         $form .= '<td>';
-        $form .= form_label('RG*:', '', array('for' => 'email'));
+        $form .= form_label('RG:', '', array('for' => 'email'));
         $form .= form_input('rg', $dadosUser['rg'], array('size' => 30, 'class' => 'formRG'));
         $form .= '</td>';
         $form .= '</tr>';
         $form .= '<tr>';
         $form .= '<td>';
-        $form .= form_label('CPF*:', '', array('for' => 'email'));
+        $form .= form_label('CPF:', '', array('for' => 'email'));
         $form .= form_input('cpf', $dadosUser['cpf'], array('size' => 30, 'class' => 'formCPF'));
         $form .= '</td>';
         $form .= '<td>';
@@ -226,11 +235,11 @@ class Alunos extends MY_Controller {
         $form .= '</tr>';
         $form .= '<tr>';
         $form .= '<td>';
-        $form .= form_label('Email*:', '', array('for' => 'email'));
+        $form .= form_label('Email:', '', array('for' => 'email'));
         $form .= form_input('email', $dadosUser['email'], array('size' => 30));
         $form .= '</td>';
         $form .= '<td>';
-        $form .= form_label('Senha*:', '', array('for' => 'email'));
+        $form .= form_label('Senha:', '', array('for' => 'email'));
         $form .= form_password('senha', $dadosUser['senha'], array('size' => 20));
         $form .= '</td>';
         $form .= '</tr>';
@@ -268,27 +277,27 @@ class Alunos extends MY_Controller {
         $form .= '</tr>';
         $form .= '<tr>';
         $form .= '<td>';
-        $form .= form_label('Nome pai**:', '', array('for' => 'email'));
+        $form .= form_label('Nome pai:', '', array('for' => 'email'));
         $form .= form_input('nome_pai', $dadosUser['nome_pai'], array('size' => 30));
         $form .= '</td>';
         $form .= '<td>';
-        $form .= form_label('Celular pai**:', '', array('for' => 'email'));
+        $form .= form_label('Celular pai:', '', array('for' => 'email'));
         $form .= form_input('cel_pai', $dadosUser['cel_pai'], array('size' => 30, 'class' => 'formFone'));
         $form .= '</td>';
         $form .= '</tr>';
         $form .= '<tr>';
         $form .= '<td>';
-        $form .= form_label('Nome mãe**:', '', array('for' => 'email'));
+        $form .= form_label('Nome mãe:', '', array('for' => 'email'));
         $form .= form_input('nome_mae', $dadosUser['nome_mae'], array('size' => 30));
         $form .= '</td>';
         $form .= '<td>';
-        $form .= form_label('Celular mãe**:', '', array('for' => 'email'));
+        $form .= form_label('Celular mãe:', '', array('for' => 'email'));
         $form .= form_input('cel_mae', $dadosUser['cel_mae'], array('size' => 30, 'class' => 'formFone'));
         $form .= '</td>';
         $form .= '</tr>';
         $form .= '<tr>';
         $form .= '<td>';
-        $form .= form_label('Email responsável**:', '', array('for' => 'email'));
+        $form .= form_label('Email responsável:', '', array('for' => 'email'));
         $form .= form_input('email_resp', $dadosUser['email_resp'], array('size' => 30));
         $form .= '</td>';
         $form .= '</tr>';
@@ -330,7 +339,7 @@ class Alunos extends MY_Controller {
         $form .= '</tr>';
         $form .= '</table>';
         $form .= form_close();
-        $form .= '<span class="obs">*Campos obrigatórios. **Campos obrigatórios quando aluno menor de idade.</span>';
+        $form .= '<span class="obs">*Campos obrigatórios.</span>';
 
         $this->dados['form'] = $form;
         $this->load->view('editar', $this->dados);
@@ -344,9 +353,6 @@ class Alunos extends MY_Controller {
         $importantes = array(
             'nome' => 'Nome:',
             'data_nasc' => 'Data de nascimento:',
-            'rg' => 'RG:',
-            'cpf' => 'CPF:',
-            'email' => 'Email:',
             'login' => 'Login:',
             'senha' => 'Senha:',
             'endereco' => 'Endereço:',
@@ -362,11 +368,11 @@ class Alunos extends MY_Controller {
             $nascimento = mktime(0, 0, 0, $mes, $dia, $ano);
             $idade = floor((((($hoje - $nascimento) / 60) / 60) / 24) / 365.25);
 
-            if ($idade < 18) {
-                $importantes['nome_mae'] = 'Nome mãe:';
-                $importantes['cel_mae'] = 'Celular mãe:';
-                $importantes['email_resp'] = 'Email do responsável:';
-            }
+            /* if ($idade < 18) {
+              $importantes['nome_mae'] = 'Nome mãe:';
+              $importantes['cel_mae'] = 'Celular mãe:';
+              $importantes['email_resp'] = 'Email do responsável:';
+              } */
             $dados['idade'] = $idade;
         }
 

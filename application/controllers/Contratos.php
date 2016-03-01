@@ -94,7 +94,7 @@ class Contratos extends MY_Controller {
         $form .= form_input('mensalidades', '', array('size' => 30, 'style' => 'width:80px;'));
         $form .='</td>';
         $form .= '<td>';
-        $form .= form_label('Valor das mensalidades (R$):', '', array('for' => 'email'));
+        $form .= form_label('Valor de cada mensalidade (R$):', '', array('for' => 'email'));
         $form .= form_input('valor_mensalidade', '', array('size' => 30, 'style' => 'width:80px;', 'class' => 'formDin'));
         $form .='</td>';
         $form .= '</tr>';
@@ -185,7 +185,7 @@ class Contratos extends MY_Controller {
         $form .= form_input('mensalidades', $dadosContrato['mensalidades'], array('size' => 30, 'style' => 'width:80px;'));
         $form .='</td>';
         $form .= '<td>';
-        $form .= form_label('Valor das mensalidades (R$):', '', array('for' => 'email'));
+        $form .= form_label('Valor da cada mensalidade (R$):', '', array('for' => 'email'));
         $form .= form_input('valor_mensalidade', $dadosContrato['valor_mensalidade'], array('size' => 30, 'style' => 'width:80px;', 'class' => 'formDin'));
         $form .='</td>';
         $form .= '</tr>';
@@ -278,6 +278,12 @@ class Contratos extends MY_Controller {
         exit();
 
         exit();
+    }
+
+    public function listaIdAluno($id_aluno) {
+        $contratoInfos = $this->contrato_model->listarIdAluno($id_aluno);
+
+        return $contratoInfos;
     }
 
     public function imprimir() {

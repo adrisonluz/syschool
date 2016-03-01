@@ -30,8 +30,8 @@ function mensagemRetorno(tipo, text) {
     $('#main_container').append('<div id="msg"></div>');
     $('#msg').fadeIn(2000);
 
-    setTimeout("$('#msg').fadeOut(2000)", 5000);
-    setTimeout("$('#msg').remove()", 7000);
+    setTimeout("$('#msg').fadeOut(2000)", 3000);
+    setTimeout("$('#msg').remove()", 5000);
 
     switch (tipo) {
         case 'sucess':
@@ -69,8 +69,8 @@ $(document).ready(function () {
             if (resposta['msg'] == 'sucess') {
                 mensagemRetorno(resposta['msg'], resposta['text']);
                 setTimeout(function () {
-                    window.location.pathname = 'syschool/' + current + '/listar';
-                }, 7000);
+                    window.location = url + '/' + current + '/listar';
+                }, 5000);
             } else {
                 mensagemRetorno(resposta['msg'], resposta['text']);
                 $('#submit').removeAttr('disabled');
