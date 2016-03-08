@@ -9,7 +9,12 @@
 
                 /* echo '<th scope="col" class="rounded-company"></th>'; */
                 foreach ($campos_tabela as $cab_tabela) {
-                    echo '<th scope="col" class="rounded">' . $cab_tabela . '</th>';
+                    if (strripos($cab_tabela, '_')) {
+                        echo '<th scope="col" class="rounded" style="text-transform: capitalize;">' . substr(strstr($cab_tabela, '_'), 1) . '</th>';
+                    } else {
+                        echo '<th scope="col" class="rounded" style="text-transform: capitalize;">' . $cab_tabela . '</th>';
+                    }
+
                     $colunas++;
                 }
                 echo '<th scope="col" class="rounded">Editar</th>';
@@ -23,13 +28,15 @@
         if (!empty($lista)) {
             foreach ($lista as $linhas) {
                 echo '<tr>';
+                $i = 0;
                 /* echo '<td><input type="checkbox" name="" /></td>'; */
-                foreach ($linhas as $linhas_item) {
+                foreach ($linhas as $linhas_key => $linhas_item) {
                     echo '<td>' . $linhas_item . '</td>';
-                }
+                    if ($i == 0) {
+                        $linhas['ID'] = $linhas_item;
+                    }
 
-                if (!empty($linhas['ID_Contrato'])) {
-                    $linhas['ID'] = $linhas['ID_Contrato'];
+                    $i++;
                 }
 
                 echo '<td><a href="' . base_url($sector . '/editar/id/' . $linhas['ID']) . '"><img src="' . base_url('assets/img/template/images/user_edit.png') . '" alt="Editar" title="Editar" border="0" /></a></td>';

@@ -21,14 +21,16 @@ class Alunos extends MY_Controller {
 
         if (!empty($this->id)) {
             $this->load->model('Contrato', 'contrato_model', TRUE);
-            $contrato = $this->contrato_model->listaIdAluno($this->id);
-
-            $sidebar->setSidebar('Contratos', base_url('contratos/editar/id/' . $contrato[0]['id_contrato']));
+            if ($contrato = $this->contrato_model->listaIdAluno($this->id)) {
+                $sidebar->setSidebar('Contratos', base_url('contratos/editar/id/' . $contrato[0]['id_contrato']));
+            } else {
+                $sidebar->setSidebar('Contratos', base_url('contratos/listar'));
+            }
         } else {
             $sidebar->setSidebar('Contratos', base_url('contratos/listar'));
         }
-
-        $sidebar->setSidebar('Logs', base_url('logs/listar'));
+        $sidebar->setSidebar('Lixeira', base_url('lixeira/alunos'));
+        $sidebar->setSidebar('Logs', base_url('logs/alunos'));
 
         $sidebar->setSubmenu('Financeiro', base_url('relatorios/financeiro'));
         $sidebar->setSubmenu('Horarios', base_url('relatorios/horarios'));
@@ -112,11 +114,11 @@ class Alunos extends MY_Controller {
         $form .= '</tr>';
         $form .= '<tr>';
         $form .= '<td>';
-        $form .= form_label('Bairro:', '', array('for' => 'email'));
+        $form .= form_label('Bairro:*', '', array('for' => 'email'));
         $form .= form_input('bairro', '', array('size' => 30));
         $form .= '</td>';
         $form .= '<td>';
-        $form .= form_label('Cidade:', '', array('for' => 'email'));
+        $form .= form_label('Cidade*:', '', array('for' => 'email'));
         $form .= form_input('cidade', '', array('size' => 30));
         $form .= '</td>';
         $form .= '</tr>';
@@ -267,11 +269,11 @@ class Alunos extends MY_Controller {
         $form .= '</tr>';
         $form .= '<tr>';
         $form .= '<td>';
-        $form .= form_label('Bairro:', '', array('for' => 'email'));
+        $form .= form_label('Bairro*:', '', array('for' => 'email'));
         $form .= form_input('bairro', $dadosUser['bairro'], array('size' => 30));
         $form .= '</td>';
         $form .= '<td>';
-        $form .= form_label('Cidade:', '', array('for' => 'email'));
+        $form .= form_label('Cidade*:', '', array('for' => 'email'));
         $form .= form_input('cidade', $dadosUser['cidade'], array('size' => 30));
         $form .= '</td>';
         $form .= '</tr>';
@@ -356,6 +358,8 @@ class Alunos extends MY_Controller {
             'login' => 'Login:',
             'senha' => 'Senha:',
             'endereco' => 'Endereço:',
+            'cidade' => 'Cidade:',
+            'bairro' => 'Bairro:',
             'boleto_nome' => 'Contratos e boletos no nome de:',
             'boleto_cpf' => 'CPF de boletos:'
         );
@@ -386,25 +390,34 @@ class Alunos extends MY_Controller {
             }
         }
 
-
-        $arrayEmail = array('Email' => $dados['email'], 'Email responsável' => $dados['email_resp']);
-        foreach ($arrayEmail as $email => $val) {
-            if (!filter_var($val, FILTER_VALIDATE_EMAIL)) {
-                $msgError = array("msg" => "alert", "text" => 'Erro no campo: "' . $email . '". Email inválido.');
-                echo json_encode($msgError);
-
-                exit();
-            }
-        }
-
         /* Valores padrões */
         $dados['nivel'] = ($editCad == 'edit' ? $dados['nivel'] : 1);
+        $dados['lixeira'] = ($editCad == 'edit' ? $dados['lixeira'] : 0);
         $dados['data_nasc'] = date('Y-m-d', strtotime($dados['data_nasc']));
 
         if ($msg !== '') {
             $msgError = array("msg" => "alert", "text" => $msg);
             echo json_encode($msgError);
         } else {
+
+            $dados['email'] = ($dados['email'] == '' ? 'não informado' : $dados['email']);
+            $dados['email_resp'] = ($dados['email_resp'] == '' ? 'não informado' : $dados['email_resp']);
+
+            if ($dados['idade'] < 18) {
+                $arrayEmail = array('Email responsável' => $dados['email_resp']);
+            } else {
+                $arrayEmail = array('Email' => $dados['email'], 'Email responsável' => $dados['email_resp']);
+            }
+
+            foreach ($arrayEmail as $email => $val) {
+                if (!filter_var($val, FILTER_VALIDATE_EMAIL)) {
+                    if ($val !== 'não informado') {
+                        $msgError = array("msg" => "alert", "text" => 'Erro no campo: "' . $email . '". Email inválido.');
+                        echo json_encode($msgError);
+                        exit();
+                    }
+                }
+            }
 
             switch ($editCad) {
                 case 'edit':

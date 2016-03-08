@@ -25,11 +25,14 @@ class Contratos extends MY_Controller {
         $sidebar->setSubmenu('Horarios', base_url('relatorios/horarios'));
         $sidebar->setSidebar('Relatórios', '#', $sidebar->getSubmenu());
 
+        $sidebar->setSidebar('Lixeira', base_url('lixeira/contratos'));
+        $sidebar->setSidebar('Logs', base_url('logs/contratos'));
+
         $this->dados['sidebar'] = $sidebar->getSidebar();
     }
 
     public function listar() {
-        $this->dados['campos_tabela'] = array('ID_Contrato', 'Nome', 'Tel', 'Curso', 'Data');
+        $this->dados['campos_tabela'] = array('id_contrato', 'Nome', 'Tel', 'Curso', 'Data');
         $this->dados['lista'] = $this->contrato_model->listar($this->id, $this->dados['campos_tabela']);
 
         $this->load->view('listar', $this->dados);
@@ -41,15 +44,15 @@ class Contratos extends MY_Controller {
 
         $form .= '<tr>';
         $form .= '<td>';
-        $form .= form_label('Aluno*:', '', array('for' => 'email'));
 
+        $form .= form_label('Aluno*:', '', array('for' => 'email'));
         $this->load->model('User', 'user_model', TRUE);
         $alunosResult = $this->user_model->listar('', 'nome, id, idade');
         foreach ($alunosResult as $alunosList => $list) {
             $alunos[] = $list;
         }
         $option[] = array(0 => 'Selecione um aluno:');
-        foreach ($alunos as $keys => $valores) {
+        foreach ($alunosResult as $keys => $valores) {
             $option[] = array($valores['id'] => $valores['nome']);
         }
         $form .= form_dropdown('id_aluno', $option, '', array('size' => 1, 'style' => 'width: 210px;'));
@@ -62,8 +65,22 @@ class Contratos extends MY_Controller {
         $form .= '</tr>';
         $form .= '<tr>';
         $form .= '<td>';
-        $form .= form_label('Curso:', '', array('for' => 'email'));
-        $form .= form_input('curso', '', array('size' => 30));
+
+        $form .= form_label('Turma:', '', array('for' => 'email'));
+        $this->load->model('Curso', 'curso_model', TRUE);
+        $this->load->model('Turma', 'turma_model', TRUE);
+        $turmasResult = $this->turma_model->listar('', 'turma_id, turma_idprof, turma_idcurso');
+        foreach ($turmasResult as $turmasList => $list) {
+            $turmas[] = $list;
+        }
+        $optionTurmas[] = array(0 => 'Selecione uma turma:');
+        foreach ($turmas as $keys => $valores) {
+            $professor = $this->user_model->listar($valores['turma_idprof'], 'nome');
+            $curso = $this->curso_model->listar($valores['turma_idcurso'], 'curso_nome');
+            $optionTurmas[] = array($valores['turma_id'] => $curso[0]['curso_nome'] . ' (' . $professor[0]['nome'] . ')');
+        }
+        $form .= form_dropdown('turma_id', $optionTurmas, '', array('size' => 1, 'style' => 'width: 210px;', 'id' => 'selectTurma'));
+
         $form .='</td>';
         $form .= '<td>';
         $form .= form_label('Quantidade de dias:', '', array('for' => 'email'));
@@ -143,6 +160,7 @@ class Contratos extends MY_Controller {
         //$form .= form_label($aluno['nome'], '', array('for' => 'email', 'class' => 'nome_contrato'));
 
         $form .= form_hidden('id_contrato', $dadosContrato['id_contrato']);
+        $form .= form_hidden('lixeira', $dadosContrato['id']);
         $form .= form_hidden('id_aluno', $aluno['id']);
 
         $form .= '</td>';
@@ -153,8 +171,20 @@ class Contratos extends MY_Controller {
         $form .= '</tr>';
         $form .= '<tr>';
         $form .= '<td>';
-        $form .= form_label('Curso:', '', array('for' => 'email'));
-        $form .= form_input('curso', $dadosContrato['curso'], array('size' => 30));
+        $form .= form_label('Turma:', '', array('for' => 'email'));
+        $this->load->model('Curso', 'curso_model', TRUE);
+        $this->load->model('Turma', 'turma_model', TRUE);
+        $turmasResult = $this->turma_model->listar('', 'turma_id, turma_idprof, turma_idcurso');
+        foreach ($turmasResult as $turmasList => $list) {
+            $turmas[] = $list;
+        }
+        $optionTurmas[] = array(0 => 'Selecione uma turma:');
+        foreach ($turmas as $keys => $valores) {
+            $professor = $this->user_model->listar($valores['turma_idprof'], 'nome');
+            $curso = $this->curso_model->listar($valores['turma_idcurso'], 'curso_nome');
+            $optionTurmas[] = array($valores['turma_id'] => $curso[0]['curso_nome'] . ' (' . $professor[0]['nome'] . ')');
+        }
+        $form .= form_dropdown('turma_id', $optionTurmas, '', array('size' => 1, 'style' => 'width: 210px;', 'id' => 'selectTurma'));
         $form .='</td>';
         $form .= '<td>';
         $form .= form_label('Quatidade de dias:', '', array('for' => 'email'));
@@ -224,17 +254,32 @@ class Contratos extends MY_Controller {
             exit();
         }
 
+        if ($dados['turma_id'] == 0) {
+            $msgError = array("msg" => "alert", "text" => 'Selecione pelo menos uma turma.');
+            echo json_encode($msgError);
+
+            exit();
+        }
+
+        $this->load->model('Turma', 'turma_model', TRUE);
+        $dados['curso'] = $this->turma_model->getCurso($dados['turma_id']);
+
         /* Valores padrões */
         //$dados['id_agent'] = ($editCad == 'edit' ? $dados['nivel'] : 1);
         $dados['data_modificacao'] = date('d/m/Y');
+        $dados['lixeira'] = ($editCad == 'edit' ? $dados['lixeira'] : 0);
         //$dados['data'] = strtotime($dados['data']);
 
         switch ($editCad) {
             case 'edit':
+                $this->turma_model->transfMatricula($dados['id_aluno'], $dados['turma_id']);
+                unset($dados['turma_id']);
                 $editCadExec = $this->contrato_model->editar($dados['id_contrato'], $dados);
                 $action = ' editado';
                 break;
             case 'cad':
+                $this->turma_model->matricula($dados['id_aluno'], $dados['turma_id']);
+                unset($dados['turma_id']);
                 $editCadExec = $this->contrato_model->inserir($dados);
                 $action = ' cadastrado';
                 break;
@@ -298,7 +343,7 @@ class Contratos extends MY_Controller {
         $html .= "<body>";
 
         if ($dados['idade'] < 18) {
-            $menor = ' responsável <strong>' . $dados['boleto_nome'] . '</strong>, cpf <strong>' . $dados['boleto_cpf'] . '</strong>';
+            $menor = ' responsável <strong>' . $dados['boleto_nome'] . '</strong>, CPF <strong>' . $dados['boleto_cpf'] . '</strong>';
         } else {
             $menor = '';
         }
@@ -306,7 +351,7 @@ class Contratos extends MY_Controller {
         $valor_matricula = ($dados['valor_matricula'] == '00,00' ? 'Isento' : 'R$ ' . $dados['valor_matricula']);
 
         $html .= '<p style="text-align: center;"><strong>CONTRATO DE PRESTAÇÃO DE SERVIÇOS</strong></p>
-        <p style="font-size:10px; text-align: justify;">Pelo presente instrumento particular de serviços, Escola de Dança Aline Rosa com sede nesta capital na Av. Assis Brasil 2100, 2° andar, bairro Passo D\'Areia, Porto Alegre/RS, CNPJ 00714970/0001-59 neste ato representado por sua diretora abaixo firmado doravante denominada simplesmente <strong>CONTRATADO</strong>, e do outro lado, doravante denominado <strong>CONTRATANTE</strong> Sr(a) <strong>' . $dados['nome'] . '</strong>, CPF <strong>' . $dados['cpf'] . '</strong>' . $menor . ' residente no endereço <strong>' . $dados['endereco'] . '</strong>, no bairro <strong>' . $dados['bairro'] . '</strong> na cidade de <strong>' . $dados['cidade'] . '</strong>/RS tem justo e contratado:</p>
+        <p style="font-size:10px; text-align: justify;">Pelo presente instrumento particular de serviços, Escola de Dança Aline Rosa com sede nesta capital na Av. Assis Brasil 2100, 2° andar, bairro Passo D\'Areia, Porto Alegre/RS, CNPJ 00714970/0001-59 neste ato representado por sua diretora abaixo firmado doravante denominada simplesmente <strong>CONTRATADO</strong>, e do outro lado, doravante denominado <strong>CONTRATANTE</strong> Sr(a) <strong>' . $dados['nome'] . '</strong>, CPF <strong>' . $dados['boleto_cpf'] . '</strong>' . $menor . ' residente no endereço <strong>' . $dados['endereco'] . '</strong>, no bairro <strong>' . $dados['bairro'] . '</strong> na cidade de <strong>' . $dados['cidade'] . '</strong>/RS tem justo e contratado:</p>
         <p style="font-size:10px; text-align: justify;"><strong>Cláusula 1°:</strong> O presente contrato é estabelecido sob os preceitos da Lei de Diretrizes e Bases da Educação e regimento dos cursos livre, tem por finalidade a prestação de serviços educacionais em Dança. O contratado colocará a disposição do contratante aulas de: <strong>' . $dados['curso'] . '</strong> no(s) dia(s) <strong>' . $dados['dias'] . '</strong> no horário <strong>' . $dados['horario'] . '</strong> nas dependências da Escola de Dança Aline Rosa. A duração do presente contrato é de <strong>' . $dados['meses'] . '</strong> meses à contar da data de assinatura do mesmo até dezembro do corrente ano.</p>
         <p style="font-size:10px; text-align: justify;"><strong>Cláusula 2°:</strong> O contratante pagará ao contratado pelos serviços prestados o seguinte: taxa de matrícula no valor de <strong>' . $valor_matricula . '</strong>, e mais <strong>' . $dados['mensalidades'] . '</strong> mensalidades no valor de R$ <strong>' . $dados['valor_mensalidade'] . '</strong>. O valor é antecipado no dia 10 de cada mês. Sendo a Escola da iniciativa privada, as mensalidades são pagas integralmente do período de entrada a dezembro, sem descontos. A quantidade de aulas do ano letivo é de <strong>' . $dados['carga_horaria'] . '</strong> aulas. A mensalidade de dezembro deverá ser paga integralmente, pois a carga horária deste mês foi completada durante o ano levito através de aulas extras, ensaios. <strong>No caso de inadimplência no período de dois meses o aluno não poderá frequentar as aulas até quitar as mensalidades pendentes</strong>.</p>
         <p style="font-size:10px; text-align: justify;"><strong>Cláusula 3°:</strong> A cobrança de mensalidades será realizada através de boleto bancário fornecido pelo Contratado. O contratante deverá pagar `custa dos encargos, juros e demais taxas em caso de atraso. Não será aceito pagamento na secretaria da Escola por motivo de segurança. A assuidade as aulas é responsabilidade do contratante. Em caso de falta a recuperação será realizada nos horários e turmas compatíveis que o contratado dispõe. Em caso de falta o aluno não haverá desconto na mensalidade. O material das aulas teóricas não está incluso na mensalidade sendo cobrado separadamente de acordo com o andamento do curso e o nível técnico dos alunos.</p>

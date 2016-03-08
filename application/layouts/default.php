@@ -28,6 +28,15 @@
                 <div class="menu">
                     <ul>
                         <li><a rel="home" href="<?= base_url(); ?>">Home</a></li>
+                        <li><a rel="alunos" href="#">Caixa<!--[if IE 7]><!--></a><!--<![endif]-->
+                        <!--[if lte IE 6]><table><tr><td><![endif]-->
+                            <ul>
+                                <li><a href="<?= base_url('caixa/hoje'); ?>" title="Listar alunos">Caixa hoje</a></li>
+                                <li><a href="<?= base_url('caixa/listar'); ?>" title="Cadastrar aluno">Extrato</a></li>
+                                <li><a href="<?= base_url('caia/relatorio'); ?>" title="Relatórios">Relatório</a></li>
+                            </ul>
+                            <!--[if lte IE 6]></td></tr></table></a><![endif]-->
+                        </li>
                         <li><a rel="alunos" href="#">Alunos<!--[if IE 7]><!--></a><!--<![endif]-->
                         <!--[if lte IE 6]><table><tr><td><![endif]-->
                             <ul>

@@ -1,21 +1,43 @@
 <?php
 
-class User extends MY_Model {
+class CaixaMov extends MY_Model {
 
     function __construct() {
         parent::__construct();
 
-        $this->setTable('user');
-        $this->logs->setTableOrigin('user');
+        $this->setTable('caixa');
+        $this->logs->setTableOrigin('caixa');
     }
 
-    function inserir($data) {
-        $this->logs->setAcao('INSERIR');
+    public function hoje() {
+        $query = $this->db->get_where($this->table, array('caixa_data' => date('d/m/Y'), 'caixa_hora_fechamento' => ''));
+
+        return $query->result_array();
+    }
+
+    public function extrato($campos) {
+        $query = $this->db->select($campos);
+        $query = $this->db->get_where($this->table);
+
+        return $query->result_array();
+    }
+
+    function abrir($data) {
+        $this->logs->setAcao('ABRIR CAIXA');
         $this->logs->setCamposVal($data);
         $this->logs->setCodigo('INSERT INTO');
         $this->logs->inserir();
 
         return $this->db->insert($this->table, $data);
+    }
+
+    public function fechar($id, $campos) {
+        $this->logs->setAcao('FECHAR CAIXA');
+        $this->logs->setCamposVal($campos);
+        $this->logs->setCodigo('UPDATE');
+        $this->logs->inserir();
+
+        return $this->db->update($this->table, $campos, array('caixa_id' => $id));
     }
 
     public function editar($id, $campos) {
@@ -27,13 +49,9 @@ class User extends MY_Model {
         return $this->db->update($this->table, $campos, array('id' => $id));
     }
 
-    function listar($id = '', $campos = '*') {
-        $query = $this->db->select($campos);
-        if ($id !== '') {
-            $query = $this->db->get_where($this->table, array('id' => $id));
-        } else {
-            $query = $this->db->get_where($this->table, array('lixeira' => 0, 'nivel' => 1));
-        }
+    function listar() {
+        $query = $this->db->select('*');
+        $query = $this->db->get_where($this->table, array('caixa_data' => date('d/m/Y'), 'caixa_hora_fechamento' => ''));
 
         return $query->result_array();
     }
@@ -64,17 +82,6 @@ class User extends MY_Model {
         } else {
             return $this->db->update($this->table, array('lixeira' => 1), array('id' => $id));
         }
-    }
-
-    public function getProfessor($id = '', $campos = '*') {
-        $query = $this->db->select($campos);
-        if ($id !== '') {
-            $query = $this->db->get_where($this->table, array('id' => $id, 'nivel' => 2));
-        } else {
-            $query = $this->db->get_where($this->table, array('lixeira' => 0, 'nivel' => 2));
-        }
-
-        return $query->result_array();
     }
 
 }
